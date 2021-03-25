@@ -8,15 +8,15 @@ export class RecipeService {
     recipeSelected = new EventEmitter<Recipe>();
 
     private recipes: Recipe[] = [
-        new Recipe('Street Shomocha',
-            'Oil fried shomocha, popular in asian countries',
+        new Recipe('Street Shingara',
+            'Oil fried shingara, popular in asian countries',
             'https://www.indianhealthyrecipes.com/wp-content/uploads/2019/11/samosa-recipe-480x270.jpg',
             [
                 new Ingredient('Meat', 1),
                 new Ingredient('French fries', 20)
             ]),
         new Recipe(
-            'Street Shingara',
+            'Street Shomocha',
             'Fried in oil and used potato and vegitables',
             'https://www.topsrilankanrecipe.com/wp-content/uploads/2019/04/21a.jpg',
             [
@@ -29,6 +29,10 @@ export class RecipeService {
 
     getRecipes() {
         return this.recipes.slice();
+    }
+
+    getRecipe(index: number) {
+        return this.recipes[index];
     }
 
     addIngredientsToShoppingList(ingredients: Ingredient[]) {
