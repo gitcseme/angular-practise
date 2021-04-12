@@ -9,25 +9,31 @@ import { Recipe } from "./recipe.model";
 export class RecipeService {
     recipesChanged = new Subject<Recipe[]>();
 
-    private recipes: Recipe[] = [
-        new Recipe('Street Shingara',
-            'Oil fried shingara, popular in asian countries',
-            'https://www.indianhealthyrecipes.com/wp-content/uploads/2019/11/samosa-recipe-480x270.jpg',
-            [
-                new Ingredient('Meat', 1),
-                new Ingredient('French fries', 20)
-            ]),
-        new Recipe(
-            'Street Shomocha',
-            'Fried in oil and used potato and vegitables',
-            'https://www.topsrilankanrecipe.com/wp-content/uploads/2019/04/21a.jpg',
-            [
-                new Ingredient('Ata', 1),
-                new Ingredient('Potato', 50)
-            ])
-    ];
+    // private recipes: Recipe[] = [
+    //     new Recipe('Street Shingara',
+    //         'Oil fried shingara, popular in asian countries',
+    //         'https://www.indianhealthyrecipes.com/wp-content/uploads/2019/11/samosa-recipe-480x270.jpg',
+    //         [
+    //             new Ingredient('Meat', 1),
+    //             new Ingredient('French fries', 20)
+    //         ]),
+    //     new Recipe(
+    //         'Street Shomocha',
+    //         'Fried in oil and used potato and vegitables',
+    //         'https://www.topsrilankanrecipe.com/wp-content/uploads/2019/04/21a.jpg',
+    //         [
+    //             new Ingredient('Ata', 1),
+    //             new Ingredient('Potato', 50)
+    //         ])
+    // ];
+    private recipes: Recipe[] = [];
 
     constructor(private slService: ShoppingListService) {}
+
+    setRecipes(recipes: Recipe[]) {
+        this.recipes = recipes;
+        this.recipesChanged.next(this.recipes.slice());
+    }
 
     getRecipes() {
         return this.recipes.slice();
