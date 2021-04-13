@@ -1,7 +1,8 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { throwError } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { BehaviorSubject, throwError } from "rxjs";
+import { catchError, tap } from "rxjs/operators";
+import { User } from "./user.model";
 
 export interface AuthResponseData {
     idToken: string;
@@ -14,6 +15,9 @@ export interface AuthResponseData {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+    user = new BehaviorSubject<User>(null);
+    
+
     constructor(private httpClient: HttpClient) {}
 
     signup(email: string, password: string) {
@@ -26,18 +30,36 @@ export class AuthService {
                 returnSecureToken: true
             }
         )
-        .pipe(catchError(this.handleError));
+        .pipe(
+            catchError(this.handleError),
+            tap(response => {
+                this.handleAuthentication(response.email, response.localId, response.idToken, +response.expiresIn);
+            })
+        );
     }
 
     login(email: string, password: string) {
-        return this.httpClient.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAiI20PC43ejH9-annXbGw6pTxijRqKxuY', 
+        return this.httpClient
+        .post<AuthResponseData>(
+            'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAiI20PC43ejH9-annXbGw6pTxijRqKxuY', 
             {
                 email: email,
                 password: password,
                 returnSecureToken: true
             }
         )
-        .pipe(catchError(this.handleError));
+        .pipe(
+            catchError(this.handleError),
+            tap(response => {
+                this.handleAuthentication(response.email, response.localId, response.idToken, +response.expiresIn);
+            })
+        );
+    }
+
+    private handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+        const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+        const user = new User(email, userId, token, expirationDate);
+        this.user.next(user);
     }
 
     private handleError(errorResponse: HttpErrorResponse) {
