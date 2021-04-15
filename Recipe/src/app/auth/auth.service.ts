@@ -62,6 +62,10 @@ export class AuthService {
         this.user.next(user);
     }
 
+    logout() {
+        this.user.next(null);
+    }
+
     private handleError(errorResponse: HttpErrorResponse) {
         let errorMessage = 'An unknown error occured';
         if (!errorResponse.error || !errorResponse.error.error) {
